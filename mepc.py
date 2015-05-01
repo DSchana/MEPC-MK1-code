@@ -1,11 +1,17 @@
+import sys
+import time
+import os
 import RPi.GPIO as GPIO
+from pygame import *
+from Controls import *
+from Sensors import *
 
-# setup control motors (refernce top down view)
-GPIO.setup(11, GPIO.out)  # top left
-GPIO.setup(13, GPIO.out)  # top right
-GPIO.setup(15, GPIO.out)  # bottom left
-GPIO.setup(16, GPIO.out)  # bottom right
+# setup classes
+controls = Controls()
+sensors = Sensors()
 
-GPIO.setup(3, GPIO.out)  # main thrust motor
-GPIO.setup(5, GPIO.out)  # x axis of MAME (multi axis mid engine)
-GPIO.setup(7, GPIO.out)  # y axis of MAME (multi axis mid engine)
+running = True
+
+while running:
+	flashLed(RED_LIGHT_1, RED_LIGHT_2)
+	flashLed(GREEN_LIGHT_1, GREEN_LIGHT_2)
