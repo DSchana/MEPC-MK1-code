@@ -3,15 +3,16 @@ import time
 import os
 import RPi.GPIO as GPIO
 from pygame import *
-from Controls import *
-from Sensors import *
+from Data import *
 
 # setup classes
-controls = Controls()
-sensors = Sensors()
+library = Data()
+controls = library.getControls()
+sensors = library.getSensors()
+brains = library.getAI()
 
 running = True
 
 while running:
-	flashLed(RED_LIGHT_1, RED_LIGHT_2)
-	flashLed(GREEN_LIGHT_1, GREEN_LIGHT_2)
+	controls.flashLed(controls.getRedLight[0], controls.getRedLight[1])
+	controls.flashLed(controls.getGreenLight[0], controls.getGreenLight[1])

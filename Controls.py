@@ -2,10 +2,13 @@
 
 from pygame import *
 from math import *
+from Data import *
 import time
+import RPi.GPIO as GPIO
 
 class Controls:
 	def __init__(self):
+                self.library = Data()
 		# setup control motors (refernce top down view)
 		GPIO.setmode(GPIO.BCM)
 
@@ -62,4 +65,7 @@ class Controls:
 
 	# Get methods
 	def getRedLight(self):
-                return [self.RED_LIGHT_1, self.RED_LIGHT_2]
+        return (self.RED_LIGHT_1, self.RED_LIGHT_2)
+
+    def getGreenLight(self):
+        return (self.GREEN_LIGHT_1, self.GREEN_LIGHT_2)
