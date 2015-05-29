@@ -8,47 +8,62 @@ import RPi.GPIO as GPIO
 
 class Controls:
 	def __init__(self):
-                self.library = Data()
+		self.library = Data()
 		# setup control motors (refernce top down view)
 		GPIO.setmode(GPIO.BOARD)
 
-		GPIO.setup(11, GPIO.out)  # top left
-		GPIO.setup(13, GPIO.out)  # top right
-		GPIO.setup(15, GPIO.out)  # bottom left
-		GPIO.setup(16, GPIO.out)  # bottom right
+		GPIO.setup(11, GPIO.OUT)  # top left (M1)
+		GPIO.setup(13, GPIO.OUT)  # top right (M2)
+		GPIO.setup(15, GPIO.OUT)  # bottom left (M3)
+		GPIO.setup(16, GPIO.OUT)  # bottom right (M4)
 
-		GPIO.setup(3, GPIO.out)  # main thrust motor
-		GPIO.setup(5, GPIO.out)  # x axis of MAME (multi axis mid engine)
-		GPIO.setup(7, GPIO.out)  # y axis of MAME (multi axis mid engine)
+		GPIO.setup(3, GPIO.OUT)  # main thrust motor (MAME)
+		GPIO.setup(5, GPIO.OUT)  # x axis of MAME (multi axis mid engine) (MAME_X)
+		GPIO.setup(7, GPIO.OUT)  # y axis of MAME (multi axis mid engine) (MAME_Y)
+
+		# setup motors to PWM
+		self.M1 = GPIO.PWM(11, 100)
+		self.M2 = GPIO.PWM(13, 100)
+		self.M3 = GPIO.PWM(15, 100)
+		self.M4 = GPIO.PWM(16, 100)
+
+		self.MAME = GPIO.PWM(3, 100)
+		self.MAME_X = GPIO.PWM(5, 100)
+		self.MAME_Y = GPIO.PWM(7, 100)
+
+		self.M1.start(0)
+		self.M2.start(0)
+		self.M3.start(0)
+		self.M4.start(0)
+		self.MAME.start(0)
+		self.MAME_X.start(0)
+		self.MAME_Y.start(0)
+
+		# values to output to motors
+		self.M1_out = 0
+		self.M2_out = 0
+		self.M3_out = 0
+		self.M4_out = 0
+		self.MAME_out = 0
+		self.MAME_X_out = 0
+		self.MAME_Y_out = 0
 
 		# setup light pin numbers
-		self.RED_LIGHT_1 = 26
-		self.RED_LIGHT_2 = 24
-
-		self.GREEN_LIGHT_1 = 22
-		self.GREEN_LIGHT_2 = 23
-
-		self.WHITE_LIGHT_1 = 21
-		self.WHITE_LIGHT_2 = 19
+		self.RED_LIGHT = 26
+		self.GREEN_LIGHT = 22
+		self.WHITE_LIGHT = 21
 
 		# setup GPIO pins
-		GPIO.setup(self.RED_LIGHT_1, GPIO.out)
-		GPIO.setup(self.RED_LIGHT_2, GPIO.out)
-		GPIO.setup(self.GREEN_LIGHT_1, GPIO.out)
-		GPIO.setup(self.GREEN_LIGHT_2, GPIO.out)
-		GPIO.setup(self.WHITE_LIGHT_1, GPIO.out)
-		GPIO.setup(self.WHITE_LIGHT_2, GPIO.out)
+		GPIO.setup(self.RED_LIGHT, GPIO.OUT)
+		GPIO.setup(self.GREEN_LIGHT, GPIO.OUT)
+		GPIO.setup(self.WHITE_LIGHT, GPIO.OUT)
 
 		# setup lights into PWM
-		self.RL1 = GPIO.PWM(self.RED_LIGHT_1, 100)
-		self.RL2 = GPIO.PWM(self.RED_LIGHT_2, 100)
-		self.GL1 = GPIO.PWM(self.GREEN_LIGHT_1, 100)
-		self.GL2 = GPIO.PWM(self.GREEN_LIGHT_2, 100)
+		self.RL = GPIO.PWM(self.RED_LIGHT, 100)
+		self.GL = GPIO.PWM(self.GREEN_LIGHT, 100)
 
-		self.RL1.start(0)
-		self.RL2.start(0)
-		self.GL1.start(0)
-		self.GL2.start(0)
+		self.RL.start(0)
+		self.GL.start(0)
 
 		# setup pygame stuff
 		joystick.init()
@@ -60,8 +75,21 @@ class Controls:
 
 		print("Initialized Joystick: %s", self.controller.get_name())
 
-	def move(self):
+	def move(self, axes):
 		"control movement of MEPC"
+		self.M1_out = 100 - (axes[0] * 100)
+		self.M2_out = 100 - (axes[0] * 100)
+		self.M3_out = axes[0] * 100
+		self.M4_out = axes[0] * 100
+
+		self.MAME.ChangeDutyCycle((-axes[2] + 1) * 100)
+
+		self.M1.ChangeDutyCycle(self.M1_out)
+		self.M2.ChangeDutyCycle(self.M2_out
+
+		self.M3.ChangeDutyCycle(self.M3_out)
+		self.M4.ChangeDutyCycle(self.M4_out)
+
 
 	def getInput(self):
 		"get and sort input from controller"
@@ -79,13 +107,13 @@ class Controls:
 
 	# Get methods
 	def getRedLight(self):
-        	return (self.RED_LIGHT_1, self.RED_LIGHT_2)
+			return (self.RED_LIGHT)
 
-    	def getGreenLight(self):
-        	return (self.GREEN_LIGHT_1, self.GREEN_LIGHT_2)
+	def getGreenLight(self):
+		return (self.GREEN_LIGHT)
 
 	def getRedPWM(self):
-		return (self.RL1, self.RL2)
+		return (self.RL)
 
 	def getGreenPWM(self):
-		return (self.GL1, self.GL2)
+		return (self.GL)

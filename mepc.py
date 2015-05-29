@@ -14,5 +14,12 @@ brains = library.getAI()
 running = True
 
 while running:
-	controls.flashLed(controls.getRedLight[0], controls.getRedLight[1])
-	controls.flashLed(controls.getGreenLight[0], controls.getGreenLight[1])
+	for e in event.get():
+		if e.type == QUIT:
+			running = False
+
+	controls.flashLed(controls.getRedPWM(), controls.getGreenPWM())
+
+	controls.move(sensors.getAxis())
+
+quit()
