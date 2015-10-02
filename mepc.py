@@ -13,6 +13,8 @@ brains = library.getAI()
 
 running = True
 
+## must add headless parts to make it work ##
+
 while running:
 	for e in event.get():
 		if e.type == QUIT:
